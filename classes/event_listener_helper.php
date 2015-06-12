@@ -91,9 +91,9 @@ class EventListenerHelper {
         if ( $dataMap['bcc_receivers']->attribute('has_content') ) {
             $bccReceivers = explode(',', $dataMap['bcc_receivers']->attribute('content'));
 
-            foreach ( $bccReceivers as $bccReceiver ) {
-                if ( $mail->validate( $bccReceiver ) ) {
-                    $mail->addBcc( $bccReceiver );
+            foreach ($bccReceivers as $bccReceiver) {
+                if ($mail->validate($bccReceiver)) {
+                    $mail->addBcc($bccReceiver);
                 }
             }
         }
@@ -155,12 +155,13 @@ class EventListenerHelper {
             // Create user, if it does not exist in ZD
             $user = $api->createUser( $name, $email );
         }
+
         // We can not continue, if user was not created in ZD
         if( $user === null ) {
             throw new Exception( 'User ID can not be fetched from Zendesk' );
         }
         // Handle custom_fields
-        $fieldsMap    = $ini->variable( 'ContactUs', 'Fields' );
+        $fieldsMap    = $ini->variable('ContactUs', 'Fields');
         $mappedFields = array();
         foreach($fieldsMap as $field => $id) {
             if(isset($fields[$field])) {
@@ -182,6 +183,7 @@ class EventListenerHelper {
         if( $ini->hasVariable('Tickets', 'BrandID') && strlen($ini->variable('Tickets', 'BrandID') ) > 0) {
             $params['brand_id'] = $ini->variable('Tickets', 'BrandID');
         }
+
         $ticket = $api->createTicket( $params );
         if( $ticket === null ) {
             throw new Exception('Zendesk ticket was not created');
