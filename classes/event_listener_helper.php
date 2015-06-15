@@ -15,21 +15,25 @@ class EventListenerHelper {
     {
         if( $uri->element(0) === 'content' && $uri->element(1) === 'collectedinfo' ) {
             $node = eZContentObject::fetchByNodeID($uri->element(2));
+            $collectedInfo = array();
 
             if ($node instanceof eZContentObject) {
                 $collectionList = eZInformationCollection::fetchCollectionsList($node->ID);
                 $collection     = $collectionList[count($collectionList)-1];
                 if ($collection instanceof eZInformationCollection) {
-                    $attributes = $collection->informationCollectionAttributes();
+                    $attributes = $collection->dataMap();
 
                     foreach ($attributes as $key => $attribute) {
-                        $collectedInfo[$attribute->contentClassAttributeName()] = $attribute->attribute('data_text');
+                        $collectedInfo[$key] = array(
+                            'name'  => $attribute->contentClassAttributeName(),
+                            'value' => $attribute->attribute('data_text')
+                        );
                     }
 
                     $ini = eZINI::instance('site.ini');
                     $externalCareEmails = $ini->hasVariable('ContactUs', 'ExternalCareEmails') ?
                         $ini->variable('ContactUs', 'ExternalCareEmails') : array();
-                    $collectedCountry = $collectedInfo['Country'];
+                    $collectedCountry = $collectedInfo['country']['value'];
 
                     $receiver = false;
                     if (array_key_exists($collectedCountry, $externalCareEmails)) {
@@ -105,8 +109,8 @@ class EventListenerHelper {
             $subject = $collection->object()->Name;
         }
 
-        if ((bool)$collectedInfo['Subject']) {
-            $subject .= ' ' . $collectedInfo['Subject'];
+        if ((bool)$collectedInfo['subject']) {
+            $subject .= ' ' . $collectedInfo['subject']['value'];
         }
         $mail->setSubject($subject);
 
@@ -129,9 +133,9 @@ class EventListenerHelper {
     ) {
         // Extract data from contact us form collection
         $fields  = array(
-            'name'    => $collectedInfo['Name'],
-            'country' => strtolower($collectedInfo['Country']),
-            'phone'   => $collectedInfo['Phone']
+            'name'    => $collectedInfo['first_name']['value'],
+            'country' => strtolower($collectedInfo['country']['value']),
+            'phone'   => $collectedInfo['phone']['value']
         );
 
         $dataMap = $collection->object()->dataMap();
@@ -140,10 +144,10 @@ class EventListenerHelper {
         } else {
             $subject = '[Contact US]';
         }
-        $message = $collectedInfo['Message'];
+        $message = $collectedInfo['message']['value'];
         // email of contact us collection
-        $email   = $collectedInfo['Email'];
-        $name    = $collectedInfo['Name'];
+        $email   = $collectedInfo['email']['value'];
+        $name    = $collectedInfo['first_name']['value'];
 
         // Get instance of ZD API wrapper
         $api = ZendeskAPIWrapper::instance();
@@ -184,7 +188,20 @@ class EventListenerHelper {
             $params['brand_id'] = $ini->variable('Tickets', 'BrandID');
         }
 
-        $ticket = $api->createTicket( $params );
+        $attributes = $collection->dataMap();
+
+        $ticketIDAttribute = false;
+        foreach ($attributes as $key => $attribute) {
+            if ($key === 'zendesk_ticket_id') {
+                $ticketIDAttribute = $attribute;
+                break;
+            }
+        }
+
+        $ticket = $api->createTicket($params);
+        $ticketIDAttribute->setAttribute('data_text', $ticket->id);
+        $ticketIDAttribute->store();
+
         if( $ticket === null ) {
             throw new Exception('Zendesk ticket was not created');
         }

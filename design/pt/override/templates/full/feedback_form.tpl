@@ -1,5 +1,5 @@
-{ezscript_load( array('feedback_form.js'))}
-{ezcss_load( array('feedback_form.css'))}
+{ezscript_load(array('feedback_form.js'))}
+{ezcss_load(array('feedback_form.css'))}
 {def
     $query_types = fetch(
         'content', 'list',
@@ -118,6 +118,9 @@
         <label>
             {$node.data_map.phone.contentclass_attribute_name}:{if $node.data_map.phone.contentclass_attribute.is_required|eq(1)} *{/if}
             {attribute_view_gui attribute=$node.data_map.phone}
+        </label>
+        <label>
+            {attribute_view_gui attribute=$node.data_map.zendesk_ticket_id html_class="hidden zendesk_ticket_id" default_value="&nbsp;"}
         </label>
     </div>
     <div class="capctha">
