@@ -17,7 +17,7 @@ class EventListenerHelper {
             $node = eZContentObject::fetchByNodeID($uri->element(2));
 
             if ($node instanceof eZContentObject) {
-                $collectionList = eZInformationCollection::fetchCollectionsList($node->attribute('contentobject_id'));
+                $collectionList = eZInformationCollection::fetchCollectionsList($node->ID);
                 $collection     = $collectionList[count($collectionList)-1];
                 if ($collection instanceof eZInformationCollection) {
                     $attributes = $collection->informationCollectionAttributes();
