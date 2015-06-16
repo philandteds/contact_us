@@ -8,8 +8,4 @@ TypeList[feedback_form]=feedback_form
 SendEmail=enabled
 SendEmailList[feedback_form]=disabled
 
-#[DisplaySettings]
-#DisplayList[feedback_form]=redirect
-#RedirectURLList[feedback_form]=/get/collectedinfo
-
 */ ?>

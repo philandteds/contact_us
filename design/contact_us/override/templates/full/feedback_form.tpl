@@ -1,5 +1,16 @@
-{ezscript_load(array('feedback_form.js'))}
-{ezcss_load(array('feedback_form.css'))}
+{ezscript_load(
+    array(
+        'jquery.fancybox.pack.js',
+        'feedback_form.js'
+    )
+)}
+{ezcss_load(
+    array(
+        'feedback_form.css'
+    )
+)}
+
+
 {def
     $query_types = fetch(
         'content', 'list',
@@ -12,9 +23,11 @@
             'ignore_visibility', true()
         )
     )
-    $countries   = fetch( 'content', 'country_list' )
-    $button_url  = false()
-    $button_text = false()
+    $countries      = fetch( 'content', 'country_list' )
+    $button_url     = false()
+    $button_text    = false()
+    $attribute      = false()
+    $selected_value = false()
 }
 
 {include uri="design:parts/meta.tpl"}
@@ -42,17 +55,24 @@
 
 <form method="post" action="{'content/action'|ezurl('no')}">
     <div class="query">
+        {set $attribute = $node.data_map.type_of_query}
         {'Your query'|i18n('philandteds')}
         <label>
-            {$node.data_map.type_of_query.contentclass_attribute_name}:{if $node.data_map.type_of_query.contentclass_attribute.is_required|eq(1)} *{/if}
-            {attribute_view_gui attribute=$node.data_map.type_of_query html_class="hidden query_type"}
+            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+            {attribute_view_gui attribute=$attribute html_class="hidden query_type"}
         </label>
         <select class="query_type">
+            {if is_set($collection_attributes[$attribute.id])}
+                {set $selected_value = $collection_attributes[$attribute.id].data_text}
+            {/if}
             <option value="0" data-id="query_type_0"></option>
             {foreach $query_types as $type}
-                <option data-id="query_type_{$type.node_id}" value="{$type.name|wash()}">{$type.name|wash()}</option>
+                <option data-id="#query_type_{$type.node_id}" value="{$type.name|wash()}"{if $selected_value|eq($type.name|wash())} selected{/if}>
+                    {$type.name|wash()}
+                </option>
             {/foreach}
         </select>
+        <a href="#" class="hidden fancybox-link fancybox"></a>
         {foreach $query_types as $type}
             {set
                 $button_url  = '#'
@@ -86,38 +106,47 @@
                 </div>
             {/if}
         {/foreach}
+        {set $attribute = $node.data_map.subject}
         <label>
-            {$node.data_map.subject.contentclass_attribute_name}:{if $node.data_map.subject.contentclass_attribute.is_required|eq(1)} *{/if}
-            {attribute_view_gui attribute=$node.data_map.subject}
+            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+            {attribute_view_gui attribute=$attribute}
         </label>
+        {set $attribute = $node.data_map.message}
         <label>
-            {$node.data_map.message.contentclass_attribute_name}:{if $node.data_map.message.contentclass_attribute.is_required|eq(1)} *{/if}
-            {attribute_view_gui attribute=$node.data_map.message}
+            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+            {attribute_view_gui attribute=$attribute}
         </label>
     </div>
     <div class="details">
         {'Your details'|i18n('philandteds')}
+        {set $attribute = $node.data_map.country}
         <label>
-            {$node.data_map.country.contentclass_attribute_name}:{if $node.data_map.country.contentclass_attribute.is_required|eq(1)} *{/if}
-            {attribute_view_gui attribute=$node.data_map.country html_class="hidden country"}
+            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+            {attribute_view_gui attribute=$attribute html_class="hidden country"}
         </label>
         <select class="country">
+            {if is_set($collection_attributes[$attribute.id])}
+                {set $selected_value = $collection_attributes[$attribute.id].data_text}
+            {/if}
             <option value="0"></option>
             {foreach $countries as $country}
-                <option value="{$country.Alpha3}">{$country.Name|wash()}</option>
+                <option value="{$country.Alpha3}"{if $selected_value|eq($country.Alpha3)} selected{/if}>{$country.Name|wash()}</option>
             {/foreach}
         </select>
+        {set $attribute = $node.data_map.first_name}
         <label>
-            {$node.data_map.first_name.contentclass_attribute_name}:{if $node.data_map.first_name.contentclass_attribute.is_required|eq(1)} *{/if}
-            {attribute_view_gui attribute=$node.data_map.first_name}
+            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+            {attribute_view_gui attribute=$attribute}
         </label>
+        {set $attribute = $node.data_map.email}
         <label>
-            {$node.data_map.email.contentclass_attribute_name}:{if $node.data_map.email.contentclass_attribute.is_required|eq(1)} *{/if}
-            {attribute_view_gui attribute=$node.data_map.email}
+            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+            {attribute_view_gui attribute=$attribute}
         </label>
+        {set $attribute = $node.data_map.phone}
         <label>
-            {$node.data_map.phone.contentclass_attribute_name}:{if $node.data_map.phone.contentclass_attribute.is_required|eq(1)} *{/if}
-            {attribute_view_gui attribute=$node.data_map.phone}
+            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+            {attribute_view_gui attribute=$attribute}
         </label>
         <label>
             {attribute_view_gui attribute=$node.data_map.zendesk_ticket_id html_class="hidden zendesk_ticket_id" default_value="&nbsp;"}
@@ -134,4 +163,4 @@
         <input type="hidden" name="ViewMode" value="full" />
     </div>
 </form>
-{undef $query_types $countries $button_url $button_text}
+{undef $query_types $countries $button_url $button_text $attribute $selected_value}

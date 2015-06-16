@@ -2,6 +2,18 @@
 
     var init = function() {
             attachEvents();
+
+            // fancybox
+            $(".fancybox").fancybox({
+
+                helpers : {
+                    overlay : {
+                        css : {
+                            'background' : 'rgba(58, 42, 45, 0.95)'
+                        }
+                    }
+                }
+            });
         },
 
         attachEvents = function() {
@@ -12,9 +24,12 @@
         },
 
         handleChangeQueryType = function() {
+            var id = $(this).find('option:selected').data( 'id' );
             $('input.query_type').val( $( this ).val() );
-            $('.help_text').hide();
-            $('#'+ $( this).find('option:selected').data( 'id' )).show();
+            if ( $( id ).length > 0 ) {
+                $('.fancybox-link').attr( 'href', id );
+                $('.fancybox-link').trigger('click');
+            }
         },
 
         handleChangeCountry = function() {
@@ -23,7 +38,7 @@
 
         handleCancelButton = function( event ) {
             event.preventDefault();
-            $( this ).parents( '.help_text').hide();
+            $.fancybox.close();
         },
 
         handleOkButton = function( event ) {
@@ -31,7 +46,7 @@
             if ( $( this ).attr('href') !== '#' ) {
                 document.location = $(this).attr( 'href' );
             } else {
-                $( this ).parents( '.help_text').hide();
+                $.fancybox.close();
             }
         };
 

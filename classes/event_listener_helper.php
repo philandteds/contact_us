@@ -44,13 +44,11 @@ class EventListenerHelper {
                         try {
                             static::sendCollectedInfoToEmail($receiver, $collection, $collectedInfo);
                         } catch(Exception $e) {
-                            //var_dump($e->getMessage());
                         }
                     } else {
                         try {
                             static::sendCollectedInfoToZD($collection, $collectedInfo);
                         } catch(Exception $e){
-                            //var_dump($e->getMessage());
                         }
                     }
                 }
@@ -71,8 +69,6 @@ class EventListenerHelper {
         $ini  = eZINI::instance('site.ini');
         $mail = new eZMail();
         $tpl  = eZTemplate::factory();
-        $tpl->setVariable('collected_info', $collectedInfo);
-        $templateResult = $tpl->fetch( 'design:mail/feedback_form.tpl' );
 
         // set email sender
         $emailSender = $ini->variable('MailSettings', 'EmailSender');
@@ -113,6 +109,10 @@ class EventListenerHelper {
             $subject .= ' ' . $collectedInfo['subject']['value'];
         }
         $mail->setSubject($subject);
+        $collectedInfo['subject']['value'] = $subject;
+
+        $tpl->setVariable('collected_info', $collectedInfo);
+        $templateResult = $tpl->fetch('design:mail/feedback_form.tpl');
 
         $mail->setBody($templateResult);
         $mailResult = eZMailTransport::send($mail);
@@ -142,8 +142,13 @@ class EventListenerHelper {
         if ($dataMap['email_subject_prefix']->attribute('has_content')) {
             $subject = '[' . $dataMap['email_subject_prefix']->attribute('content') . ']';
         } else {
-            $subject = '[Contact US]';
+            $subject = $collection->object()->Name;
         }
+
+        if ((bool)$collectedInfo['subject']) {
+            $subject .= ' ' . $collectedInfo['subject']['value'];
+        }
+
         $message = $collectedInfo['message']['value'];
         // email of contact us collection
         $email   = $collectedInfo['email']['value'];
