@@ -39,6 +39,7 @@
         handleCancelButton = function( event ) {
             event.preventDefault();
             $.fancybox.close();
+	    $('select.query_type :nth-child(1)').prop('selected', true);
         },
 
         handleOkButton = function( event ) {
@@ -47,6 +48,7 @@
                 document.location = $(this).attr( 'href' );
             } else {
                 $.fancybox.close();
+		$('input#subject').val($('select.query_type option:selected').val());
             }
         };
 
