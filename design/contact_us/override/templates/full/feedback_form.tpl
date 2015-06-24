@@ -149,7 +149,10 @@
             {attribute_view_gui attribute=$attribute}
         </label>
         <label>
-            {attribute_view_gui attribute=$node.data_map.zendesk_ticket_id html_class="hidden zendesk_ticket_id" default_value="&nbsp;"}
+            {attribute_view_gui attribute=$node.data_map.zendesk_ticket_id html_class="hidden zendesk_ticket_id" default_value=""}
+        </label>
+        <label>
+            {attribute_view_gui attribute=$node.data_map.email_sent html_class="hidden email_sent"}
         </label>
     </div>
     <div class="capctha">
