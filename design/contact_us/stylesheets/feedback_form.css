@@ -6,3 +6,30 @@
 .help_text {
     display: none;
 }
+.dotted-line {
+	border-bottom: 2px dotted #de0000;
+	padding-bottom: 10px;
+}
+h1.reg_heading, .feedback h2 {
+	text-transform: lowercase;
+	font-family: 'texgyreadventorBold', sans-serif;
+}
+form.registration.feedback {
+	max-width: 640px;
+}
+.query.reg_wrapper, .details.reg_wrapper {
+	width: 50%;
+	padding: 10% 25%;
+	margin: 10px 0 20px 0;
+}
+form.registration.feedback input, form.registration.feedback select.query_type, form.registration.feedback select.country, form.registration.feedback textarea {
+	width: 100%;
+}
+form.registration.feedback input.continue-btn {
+		width: 25%!important;
+		margin-left: 25%!important;
+		margin-top: 0!important;
+}
+form.registration.feedback p {
+	line-height: 1.4;
+}

@@ -32,7 +32,7 @@
 
 {include uri="design:parts/meta.tpl"}
 
-<h1>{$node.data_map.title.content|wash()}</h1>
+<h1 class="reg_heading dotted-line">{$node.data_map.title.content|wash()}</h1>
 
 {if $node.data_map.description.content.is_empty|not()}
     <div class="attribute-short">
@@ -52,22 +52,23 @@
         collection_attributes=$collection_attributes
     }
 {/if}
-
-<form method="post" action="{'content/action'|ezurl('no')}">
-    <div class="query">
+<div>
+<form method="post" class="registration feedback" action="{'content/action'|ezurl('no')}">
+    <h2>{'Your query'|i18n('philandteds')}</h2>
+    <div class="query reg_wrapper">
         {set $attribute = $node.data_map.type_of_query}
-        {'Your query'|i18n('philandteds')}
-        <label>
+        
+        {* <label>
             {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
             {attribute_view_gui attribute=$attribute html_class="hidden query_type"}
-        </label>
+        </label> *}
         <select class="query_type">
             {if is_set($collection_attributes[$attribute.id])}
                 {set $selected_value = $collection_attributes[$attribute.id].data_text}
             {/if}
-            <option value="0" data-id="query_type_0"></option>
+            <option value="0" data-id="query_type_0">{'Type of query'|i18n( 'extension/contact_us' )}</option>
             {foreach $query_types as $type}
-                <option data-id="#query_type_{$type.node_id}" value="{$type.name|wash()}"{if $selected_value|eq($type.name|wash())} selected{/if}>
+                <option data-id="#query_type_{$type.node_id}" value="{$type.name|wash()}" {if $selected_value|eq($type.name|wash())} selected{/if}>
                     {$type.name|wash()}
                 </option>
             {/foreach}
@@ -107,60 +108,67 @@
             {/if}
         {/foreach}
         {set $attribute = $node.data_map.subject}
-        <label>
-            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+      {*<label>{$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}</label>*} 
             {attribute_view_gui attribute=$attribute}
-        </label>
+        
         {set $attribute = $node.data_map.message}
-        <label>
-            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+        {*<label>{$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}</label>*}
             {attribute_view_gui attribute=$attribute}
-        </label>
+        
     </div>
-    <div class="details">
-        {'Your details'|i18n('philandteds')}
+    
+    <h2>{'Your details'|i18n('philandteds')}</h2>
+    <div class="details reg_wrapper">
         {set $attribute = $node.data_map.country}
-        <label>
-            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+        {*<label>{$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}</label>*}
             {attribute_view_gui attribute=$attribute html_class="hidden country"}
-        </label>
+        
         <select class="country">
             {if is_set($collection_attributes[$attribute.id])}
                 {set $selected_value = $collection_attributes[$attribute.id].data_text}
             {/if}
-            <option value="0"></option>
+            <option value="0">{'Please select country'|i18n( 'extension/contact_us' )}</option>
             {foreach $countries as $country}
                 <option value="{$country.Alpha3}"{if $selected_value|eq($country.Alpha3)} selected{/if}>{$country.Name|wash()}</option>
             {/foreach}
         </select>
         {set $attribute = $node.data_map.first_name}
-        <label>
-            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+        {*<label>{$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if} </label>*}
             {attribute_view_gui attribute=$attribute}
-        </label>
+       
         {set $attribute = $node.data_map.email}
-        <label>
-            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+        {*<label>{$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}</label>*}
             {attribute_view_gui attribute=$attribute}
-        </label>
+        
         {set $attribute = $node.data_map.phone}
-        <label>
-            {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
+        {*<label>{$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if} </label>*}
             {attribute_view_gui attribute=$attribute}
-        </label>
+       
         <label>
             {attribute_view_gui attribute=$node.data_map.zendesk_ticket_id html_class="hidden zendesk_ticket_id" default_value="&nbsp;"}
         </label>
-    </div>
-    <div class="capctha">
+        <div class="capctha">
         {attribute_view_gui attribute=$node.data_map.captcha}
     </div>
+    </div>
+    
 
     <div class="attribute-short">
-        <input type="submit" name="ActionCollectInformation" class="" value="{'Send'|i18n('philandteds')}" />
+        <input type="submit" name="ActionCollectInformation" class="continue-btn" value="{'Send'|i18n('philandteds')}" />
         <input type="hidden" name="ContentNodeID" value="{$node.node_id}" />
         <input type="hidden" name="ContentObjectID" value="{$node.object.id}" />
         <input type="hidden" name="ViewMode" value="full" />
     </div>
 </form>
+</div>
+
+<script>
+{literal}
+head(function(){
+	$.validate();
+    });
+{/literal}
+</script>
+
+
 {undef $query_types $countries $button_url $button_text $attribute $selected_value}
