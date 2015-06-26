@@ -30,7 +30,7 @@
             if ( $( id ).length > 0 ) {
                 $('.fancybox-link').attr( 'href', id );
                 $('.fancybox-link').trigger('click');
-                $( 'form input[type=submit]' ).attr('disabled', 'disabled');
+                $( 'form input, form textarea, form select' ).attr('disabled', 'disabled');
             }
         },
 
@@ -42,7 +42,7 @@
             event.preventDefault();
             $.fancybox.close();
 	        $('select.query_type :nth-child(1)').prop('selected', true);
-            $( 'form input[type=submit]' ).removeAttr('disabled');
+            $( 'form input, form textarea, form select' ).removeAttr('disabled');
         },
 
         handleOkButton = function( event ) {
@@ -52,7 +52,7 @@
             } else {
                 $.fancybox.close();
 		        $('input#subject').val($('select.query_type option:selected').val());
-                $( 'form input[type=submit]' ).removeAttr('disabled');
+                $( 'form input, form textarea, form select' ).removeAttr('disabled');
             }
         };
 
