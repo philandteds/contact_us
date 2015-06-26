@@ -60,8 +60,8 @@
         
         {* <label>
             {$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}
-            {attribute_view_gui attribute=$attribute html_class="hidden query_type"}
         </label> *}
+            {attribute_view_gui attribute=$attribute html_class="hidden query_type"}
         <select class="query_type">
             {if is_set($collection_attributes[$attribute.id])}
                 {set $selected_value = $collection_attributes[$attribute.id].data_text}
