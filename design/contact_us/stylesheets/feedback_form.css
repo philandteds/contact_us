@@ -17,22 +17,28 @@
 .help_text .buttons {
 	display: inline-block;
 	text-transform: lowercase;
-	font-weight: 200;
+	font-weight: 200!important;
 }
 .help_text .buttons .ok {
 	  background: #de0000!important;
 	  border: #de0000 1px solid!important;
+	  padding: 3px 30px;
 }
 .help_text .buttons .ok:hover {
 	opacity: .8;
 }
 .help_text .buttons .cancel {
 		background: none;
-		color: #158ec2;		
+		color: #158ec2;
+		font-size: 15px!important;		
+}
+.help_text .description p {
+	line-height: 1.4;
 }
 .fancybox-close {
 	top: 0;
 	right:0;
+	display: none;
 }
 .dotted-line {
 	border-bottom: 2px dotted #de0000;
