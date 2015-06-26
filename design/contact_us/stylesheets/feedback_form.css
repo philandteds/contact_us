@@ -16,11 +16,19 @@
 }
 .help_text .buttons {
 	display: inline-block;
+	text-transform: lowercase;
+	font-weight: 200;
+}
+.help_text .buttons .ok {
+	  background: #de0000!important;
+	  border: #de0000 1px solid!important;
+}
+.help_text .buttons .ok:hover {
+	opacity: .8;
 }
 .help_text .buttons .cancel {
 		background: none;
-		color: #158ec2;
-		font-weight: 200;
+		color: #158ec2;		
 }
 .fancybox-close {
 	top: 0;
