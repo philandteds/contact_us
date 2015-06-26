@@ -19,6 +19,7 @@
             'depth', false(),
             'class_filter_type', 'include',
             'class_filter_array', array( 'query_type' ),
+	    'sort_by', array('priority', true()),
             'main_node_only', true(),
             'ignore_visibility', true()
         )
