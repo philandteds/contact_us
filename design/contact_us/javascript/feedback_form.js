@@ -8,12 +8,18 @@
 
                 helpers : {
                     overlay : {
-                        overlayOpacity  : 0.8,
                         css : {
-                            'background' : 'rgba(58, 42, 45, 0.95)'
+                            'background' : 'rgba(58, 42, 45, 0.6)',
+			    'width' : '100%',
+			    'height' : '5000px',
+			    'position' : 'fixed',
+			    'top' : 0,
+			    'left' : 0
                         }
                     }
-                }
+                },
+		closeBtn : false,
+		modal : true
             });
         },
 
@@ -30,7 +36,6 @@
             if ( $( id ).length > 0 ) {
                 $('.fancybox-link').attr( 'href', id );
                 $('.fancybox-link').trigger('click');
-                $( 'form input, form textarea, form select' ).attr('disabled', 'disabled');
             }
         },
 
@@ -42,7 +47,6 @@
             event.preventDefault();
             $.fancybox.close();
 	        $('select.query_type :nth-child(1)').prop('selected', true);
-            $( 'form input, form textarea, form select' ).removeAttr('disabled');
         },
 
         handleOkButton = function( event ) {
@@ -52,7 +56,6 @@
             } else {
                 $.fancybox.close();
 		        $('input#subject').val($('select.query_type option:selected').val());
-                $( 'form input, form textarea, form select' ).removeAttr('disabled');
             }
         };
 
