@@ -1,11 +1,11 @@
-{ezscript_load(
+{ezscript_require(
     array(
         'jquery.fancybox.pack.js',
         'feedback_form.js',
         'jquery.form-validator.min.js'
     )
 )}
-{ezcss_load(
+{ezcss_require(
     array(
         'feedback_form.css'
     )
@@ -55,7 +55,7 @@
 {/if}
 <div>
 <form method="post" class="registration feedback" action="{'content/action'|ezurl('no')}">
-    <h2>{'Your query'|i18n('philandteds')}</h2>
+    <h2>{'Your query'|i18n('contact_us')}</h2>
     <div class="query reg_wrapper">
         {set $attribute = $node.data_map.type_of_query}
         
@@ -103,7 +103,7 @@
                     {/if}
                     <div class="buttons">
                         <a class="ok" href="{$button_url}">{$button_text}</a>
-                        <a href="#" class="cancel">{'Cancel'|i18n('philandteds')}</a>
+                        <a href="#" class="cancel">{'Cancel'|i18n('contact_us')}</a>
                     </div>
                 </div>
             {/if}
@@ -118,7 +118,7 @@
         
     </div>
     
-    <h2>{'Your details'|i18n('philandteds')}</h2>
+    <h2>{'Your details'|i18n('contact_us')}</h2>
     <div class="details reg_wrapper">
         {set $attribute = $node.data_map.country}
         {*<label>{$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}</label>*}
@@ -148,17 +148,14 @@
         <label>
             {attribute_view_gui attribute=$node.data_map.zendesk_ticket_id html_class="hidden zendesk_ticket_id" default_value=""}
         </label>
-        <label>
-            {attribute_view_gui attribute=$node.data_map.email_sent html_class="hidden email_sent"}
-        </label>
-        <div class="capctha">
+        <div class="captcha">
         {attribute_view_gui attribute=$node.data_map.captcha}
     </div>
     </div>
     
 
     <div class="attribute-short">
-        <input type="submit" name="ActionCollectInformation" class="continue-btn" value="{'Send'|i18n('philandteds')}" />
+        <input type="submit" name="ActionCollectInformation" class="continue-btn" value="{'Send'|i18n('contact_us')}" />
         <input type="hidden" name="ContentNodeID" value="{$node.node_id}" />
         <input type="hidden" name="ContentObjectID" value="{$node.object.id}" />
         <input type="hidden" name="ViewMode" value="full" />
