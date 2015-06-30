@@ -1,7 +1,8 @@
 {ezscript_load(
     array(
         'jquery.fancybox.pack.js',
-        'feedback_form.js'
+        'feedback_form.js',
+        'jquery.form-validator.min.js'
     )
 )}
 {ezcss_load(
@@ -9,7 +10,6 @@
         'feedback_form.css'
     )
 )}
-
 
 {def
     $query_types = fetch(
@@ -173,6 +173,5 @@ head(function(){
     });
 {/literal}
 </script>
-
 
 {undef $query_types $countries $button_url $button_text $attribute $selected_value}
