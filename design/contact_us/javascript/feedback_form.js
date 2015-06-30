@@ -9,10 +9,17 @@
                 helpers : {
                     overlay : {
                         css : {
-                            'background' : 'rgba(58, 42, 45, 0.95)'
+                            'background' : 'rgba(58, 42, 45, 0.6)',
+			    'width' : '100%',
+			    'height' : '5000px',
+			    'position' : 'fixed',
+			    'top' : 0,
+			    'left' : 0
                         }
                     }
-                }
+                },
+		closeBtn : false,
+		modal : true
             });
         },
 
@@ -39,7 +46,7 @@
         handleCancelButton = function( event ) {
             event.preventDefault();
             $.fancybox.close();
-	    $('select.query_type :nth-child(1)').prop('selected', true);
+	        $('select.query_type :nth-child(1)').prop('selected', true);
         },
 
         handleOkButton = function( event ) {
@@ -48,7 +55,7 @@
                 document.location = $(this).attr( 'href' );
             } else {
                 $.fancybox.close();
-		$('input#subject').val($('select.query_type option:selected').val());
+		        $('input#subject').val($('select.query_type option:selected').val());
             }
         };
 
