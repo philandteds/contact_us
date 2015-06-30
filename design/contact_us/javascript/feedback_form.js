@@ -1,4 +1,4 @@
-;(function(){
+(function(){
 
     var init = function() {
             attachEvents();
@@ -61,4 +61,4 @@
 
     $( document ).ready( init );
 
-})();
+})(jQuery);
