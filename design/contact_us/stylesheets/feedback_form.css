@@ -41,7 +41,7 @@
 	display: none;
 }
 .dotted-line {
-	border-bottom: 2px dotted #de0000;
+	border-bottom: 2px dotted #e0e0e0;
 	padding-bottom: 10px;
 }
 h1.reg_heading, .feedback h2 {
@@ -53,8 +53,9 @@ form.registration.feedback {
 }
 .query.reg_wrapper, .details.reg_wrapper {
 	width: 50%;
-	padding: 10% 25%;
+	padding: 5% 25%;
 	margin: 10px 0 20px 0;
+	border: 1px solid #F0F0F0;
 }
 form.registration.feedback input, form.registration.feedback select.query_type, form.registration.feedback select.country, form.registration.feedback textarea {
 	width: 100%;
