@@ -124,11 +124,11 @@
         {*<label>{$attribute.contentclass_attribute_name}:{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}</label>*}
             {attribute_view_gui attribute=$attribute html_class="hidden country"}
         
-        <select class="country">
+        <select class="country"{if $attribute.contentclass_attribute.is_required|eq(1)} data-validation="required"{/if}>
             {if is_set($collection_attributes[$attribute.id])}
                 {set $selected_value = $collection_attributes[$attribute.id].data_text}
             {/if}
-            <option value="0">{'Please select country'|i18n( 'extension/contact_us' )}</option>
+            <option value="0">{'Please select country'|i18n( 'extension/contact_us' )}{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}</option>
             {foreach $countries as $country}
                 <option value="{$country.Alpha3}"{if $selected_value|eq($country.Alpha3)} selected{/if}>{$country.Name|wash()}</option>
             {/foreach}
