@@ -128,7 +128,7 @@
             {if is_set($collection_attributes[$attribute.id])}
                 {set $selected_value = $collection_attributes[$attribute.id].data_text}
             {/if}
-            <option>{'Please select country'|i18n( 'extension/contact_us' )}{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}</option>
+            <option value="">{'Please select country'|i18n( 'extension/contact_us' )}{if $attribute.contentclass_attribute.is_required|eq(1)} *{/if}</option>
             {foreach $countries as $country}
                 <option value="{$country.Alpha3}"{if $selected_value|eq($country.Alpha3)} selected{/if}>{$country.Name|wash()}</option>
             {/foreach}
