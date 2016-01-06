@@ -52,13 +52,15 @@ form.registration.feedback {
 	max-width: 640px;
 }
 .query.reg_wrapper, .details.reg_wrapper {
-	width: 50%;
-	padding: 5% 25%;
 	margin: 10px 0 20px 0;
 	border: 1px solid #F0F0F0;
 }
 form.registration.feedback input, form.registration.feedback select.query_type, form.registration.feedback select.country, form.registration.feedback textarea {
-	width: 100%;
+	width: 96%;
+	margin-left: 2%;
+}
+.captcha {
+	margin-left: 2%;
 }
 form.registration.feedback input.continue-btn {
 		width: 25%!important;
