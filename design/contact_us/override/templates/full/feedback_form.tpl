@@ -33,7 +33,7 @@
 
 {include uri="design:parts/meta.tpl"}
 
-<h1 class="reg_heading dotted-line">{$node.data_map.title.content|wash()}</h1>
+<h1 class="reg_heading">{$node.data_map.title.content|wash()}</h1>
 
 {if $node.data_map.description.content.is_empty|not()}
     <div class="attribute-short">
