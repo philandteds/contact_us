@@ -35,8 +35,16 @@ class EventListenerHelper {
                         $ini->variable('ContactUs', 'ExternalCareEmails') : array();
                     $collectedCountry = $collectedInfo['country']['value'];
 
+                    $queryEmailMap = $ini->hasVariable('ContactUs', 'QueryEmailMap') ?
+                        $ini->variable('ContactUs', 'QueryEmailMap') : array();
+                    $collectedQueryType = $collectedInfo['type_of_query']['value'];
+					
                     $receiver = false;
-                    if (array_key_exists($collectedCountry, $externalCareEmails)) {
+					
+					if(array_key_exists($collectedQueryType, $queryEmailMap)){
+						$receiver = $queryEmailMap[$collectedQueryType];
+					}
+					else if (array_key_exists($collectedCountry, $externalCareEmails)) {
                         $receiver = $externalCareEmails[$collectedCountry];
                     }
 
