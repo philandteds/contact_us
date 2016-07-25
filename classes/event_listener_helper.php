@@ -45,11 +45,17 @@ class EventListenerHelper {
 					eZDebug::writeNotice( var_dump($queryEmailMap) );
 					
 					eZDebug::writeNotice( "collectedQueryType= $collectedQueryType" );
+					eZDebug::writeNotice( "collectedCountry= $collectedCountry" );
+					
 					if(array_key_exists($collectedQueryType, $queryEmailMap)){
+						eZDebug::writeNotice( "array_key_exists(collectedQueryType, queryEmailMap)=true" );
 						$receiver = $queryEmailMap[$collectedQueryType];
+						eZDebug::writeNotice( "receiver=$receiver" );
 					}
 					else if (array_key_exists($collectedCountry, $externalCareEmails)) {
+						eZDebug::writeNotice( "array_key_exists(collectedCountry, externalCareEmails)=true" );
                         $receiver = $externalCareEmails[$collectedCountry];
+						eZDebug::writeNotice( "receiver=$receiver" );
                     }
 
 					eZDebug::writeNotice( "CONTACT US receiver= $receiver" );
