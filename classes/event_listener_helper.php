@@ -43,6 +43,7 @@ class EventListenerHelper {
 					
 					eZDebug::writeNotice( "CONTACT US var_dump(queryEmailMap)= " );
 					eZDebug::writeNotice( var_dump($queryEmailMap) );
+					eZDebug::writeNotice( var_dump($externalCareEmails) );
 					
 					eZDebug::writeNotice( "collectedQueryType= $collectedQueryType" );
 					eZDebug::writeNotice( "collectedCountry= $collectedCountry" );
