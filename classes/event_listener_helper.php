@@ -32,9 +32,7 @@ class EventListenerHelper {
 
                     $ini = eZINI::instance('site.ini');
                     $externalCareEmails = $ini->hasVariable('ContactUs', 'ExternalCareEmails') ?
-                        $ini->variable('ContactUs', 'ExternalCareEmails') : array();
-					
-					eZDebug::writeNotice( "CONTACT US externalCareEmails= <$externalCareEmails>" );
+                        $ini->variable('ContactUs', 'ExternalCareEmails') : array();					
                     $collectedCountry = $collectedInfo['country']['value'];
 
                     $queryEmailMap = $ini->hasVariable('ContactUs', 'QueryEmailMap') ?
@@ -50,6 +48,8 @@ class EventListenerHelper {
                         $receiver = $externalCareEmails[$collectedCountry];
                     }
 
+					eZDebug::writeNotice( "CONTACT US receiver= $receiver" );
+					
                     if ($receiver) {
                         try {
                             static::sendCollectedInfoToEmail($receiver, $collection, $collectedInfo);
