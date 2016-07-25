@@ -44,6 +44,7 @@ class EventListenerHelper {
 					eZDebug::writeNotice( "CONTACT US var_dump(queryEmailMap)= " );
 					eZDebug::writeNotice( var_dump($queryEmailMap) );
 					
+					eZDebug::writeNotice( "collectedQueryType= $collectedQueryType" );
 					if(array_key_exists($collectedQueryType, $queryEmailMap)){
 						$receiver = $queryEmailMap[$collectedQueryType];
 					}
