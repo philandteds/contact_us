@@ -7,6 +7,8 @@
  */
 class EventListenerHelper {
 
+    const MAX_ZENDESK_RETRIES = 3;
+
     /**
      * @param $uri
      * @throws Exception
@@ -15,20 +17,13 @@ class EventListenerHelper {
     {
         if( $uri->element(0) === 'content' && $uri->element(1) === 'collectedinfo' ) {
             $node = eZContentObject::fetchByNodeID($uri->element(2));
-            $collectedInfo = array();
 
             if ($node instanceof eZContentObject) {
                 $collectionList = eZInformationCollection::fetchCollectionsList($node->ID);
                 $collection     = $collectionList[count($collectionList)-1];
                 if ($collection instanceof eZInformationCollection) {
-                    $attributes = $collection->dataMap();
 
-                    foreach ($attributes as $key => $attribute) {
-                        $collectedInfo[$key] = array(
-                            'name'  => $attribute->contentClassAttributeName(),
-                            'value' => $attribute->attribute('data_text')
-                        );
-                    }
+                    $collectedInfo = self::buildCollectedInfoArray($collection);
 
                     $ini = eZINI::instance('site.ini');
                     $externalCareEmails = $ini->hasVariable('ContactUs', 'ExternalCareEmails') ?
@@ -56,16 +51,88 @@ class EventListenerHelper {
                         try {
                             static::sendCollectedInfoToEmail($receiver, $collection, $collectedInfo);
                         } catch(Exception $e) {
+
                         }
                     } else {
                         try {
-                            static::sendCollectedInfoToZD($collection, $collectedInfo);
+                            //static::sendCollectedInfoToZD($collection, $collectedInfo);
+                            self::sendCollectedInfoToZDWithRetry($collection->ID);
                         } catch(Exception $e){
+                            $msg = $e->getMessage();
+                            eZDebug::writeError("Failure to raise Zendesk ticket: $msg");
                         }
                     }
                 }
             }
         }
+    }
+
+
+
+    static function sendCollectedInfoToZDWithRetry($collectionId) {
+        $collection = eZInformationCollection::fetch($collectionId);
+        $collectedInfo = self::buildCollectedInfoArray($collection);
+
+        $retryTrackingRow = ptZendesk::fetch($collection->ID);
+        if (!$retryTrackingRow) {
+            $retryTrackingRow = new ptZendesk(array(
+                'informationcollection_id' => $collectionId,
+                'retry_count' => 0,
+                'status' => ptZendesk::ZENDESK_RETRY_STATUS_PENDING
+            ));
+        }
+
+        $retryCount = $retryTrackingRow->attribute('retry_count');
+        $status = $retryTrackingRow->attribute('status');
+        $error = null;
+
+        $retryCount ++;
+
+        try {
+            self::sendCollectedInfoToZD($collection, $collectedInfo);
+
+            // successful send.
+            $status = ptZendesk::ZENDESK_RETRY_STATUS_SUCCESS;
+
+        } catch (Exception $e) {
+
+            // failure to send.
+            $msg = $e->getMessage();
+            $error = $msg;
+
+            if ($retryCount >= self::MAX_ZENDESK_RETRIES) {
+                $status = ptZendesk::ZENDESK_RETRY_STATUS_FAIL;
+
+                self::sendZendeskFailureEmail($collection, $collectedInfo, $error);
+
+            } else {
+                $status = ptZendesk::ZENDESK_RETRY_STATUS_RETRY;
+            }
+
+        } finally {
+            // update the tracking row.
+
+            $retryTrackingRow->setAttribute('retry_count', $retryCount);
+            $retryTrackingRow->setAttribute('status', $status);
+            $retryTrackingRow->setAttribute('error', substr($error, 0, 1000));
+
+            $retryTrackingRow->store();
+        }
+
+    }
+
+    static function buildCollectedInfoArray(eZInformationCollection $collection) {
+        $attributes = $collection->dataMap();
+        $collectedInfo = array();
+
+        foreach ($attributes as $key => $attribute) {
+            $collectedInfo[$key] = array(
+                'name'  => $attribute->contentClassAttributeName(),
+                'value' => $attribute->attribute('data_text')
+            );
+        }
+
+        return $collectedInfo;
     }
 
     /**
@@ -240,5 +307,44 @@ class EventListenerHelper {
                 $ticketIDAttribute->store();
             }
         }
+    }
+
+    private static function sendZendeskFailureEmail($collection, $collectedInfo, $error)
+    {
+
+        $ini  = eZINI::instance('site.ini');
+        $mail = new eZMail();
+        $tpl  = eZTemplate::factory();
+
+        // set email sender
+        $emailSender = $ini->variable('MailSettings', 'EmailSender');
+        if (!$emailSender) {
+            $emailSender = $ini->variable('MailSettings', 'AdminEmail');
+        }
+        $mail->setSender($emailSender);
+
+        // set email receiver
+
+        $receiver = $ini->variable('InformationCollectionSettings', 'EmailReceiver');
+        if (!$receiver) {
+            $receiver = $ini->variable('MailSettings', 'AdminEmail');
+        }
+        $mail->setReceiver($receiver);
+
+        $mail->setSubject('FAIL: Cannot create a Zendesk ticket for a customer support request');
+
+        $tpl->setVariable('collected_info', $collectedInfo);
+        $tpl->setVariable( 'collection_id', $collection->ID);
+        $tpl->setVariable('zendesk_error', $error);
+
+        $templateResult = $tpl->fetch('design:mail/zendesk_failure_fallback.tpl');
+
+        $mail->setBody($templateResult);
+        $mailResult = eZMailTransport::send($mail);
+
+        if ($mailResult === false) {
+            throw new Exception('Mail with collected info has not been sent');
+        }
+
     }
 }
