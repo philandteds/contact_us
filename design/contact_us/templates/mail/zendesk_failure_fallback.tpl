@@ -4,7 +4,7 @@ We have FAILED to create a ticket in Zendesk for the following customer feedback
 not working. Please have an appropriate person investigate it.
 
 Error:       {$zendesk_error}
-Admin page:  {concat('/infocollector/view/', $collection_id)|ezurl('no', 'full')}
+Admin page:  {concat('/infocollector/view/', $collection_id)|ezurl('no', 'relative')}
 
 Content:
 --------

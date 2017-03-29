@@ -51,6 +51,8 @@ class EventListenerHelper {
                         try {
                             static::sendCollectedInfoToEmail($receiver, $collection, $collectedInfo);
                         } catch(Exception $e) {
+                            $msg = $e->getMessage();
+                            eZDebug::writeError("Failure to send collected info email: $msg");
 
                         }
                     } else {
@@ -67,60 +69,12 @@ class EventListenerHelper {
         }
     }
 
-
-
-    static function sendCollectedInfoToZDWithRetry($collectionId) {
-        $collection = eZInformationCollection::fetch($collectionId);
-        $collectedInfo = self::buildCollectedInfoArray($collection);
-
-        $retryTrackingRow = ptZendesk::fetch($collection->ID);
-        if (!$retryTrackingRow) {
-            $retryTrackingRow = new ptZendesk(array(
-                'informationcollection_id' => $collectionId,
-                'retry_count' => 0,
-                'status' => ptZendesk::ZENDESK_RETRY_STATUS_PENDING
-            ));
-        }
-
-        $retryCount = $retryTrackingRow->attribute('retry_count');
-        $status = $retryTrackingRow->attribute('status');
-        $error = null;
-
-        $retryCount ++;
-
-        try {
-            self::sendCollectedInfoToZD($collection, $collectedInfo);
-
-            // successful send.
-            $status = ptZendesk::ZENDESK_RETRY_STATUS_SUCCESS;
-
-        } catch (Exception $e) {
-
-            // failure to send.
-            $msg = $e->getMessage();
-            $error = $msg;
-
-            if ($retryCount >= self::MAX_ZENDESK_RETRIES) {
-                $status = ptZendesk::ZENDESK_RETRY_STATUS_FAIL;
-
-                self::sendZendeskFailureEmail($collection, $collectedInfo, $error);
-
-            } else {
-                $status = ptZendesk::ZENDESK_RETRY_STATUS_RETRY;
-            }
-
-        } finally {
-            // update the tracking row.
-
-            $retryTrackingRow->setAttribute('retry_count', $retryCount);
-            $retryTrackingRow->setAttribute('status', $status);
-            $retryTrackingRow->setAttribute('error', substr($error, 0, 1000));
-
-            $retryTrackingRow->store();
-        }
-
-    }
-
+    /**
+     * Convenience function to convert all dataMap() items in an information collection into an associative array.
+     *
+     * @param eZInformationCollection $collection Information collection to transform
+     * @return array Associative array of field -> data_text value
+     */
     static function buildCollectedInfoArray(eZInformationCollection $collection) {
         $attributes = $collection->dataMap();
         $collectedInfo = array();
@@ -309,6 +263,72 @@ class EventListenerHelper {
         }
     }
 
+    /**
+     * Raises a ticket with Zendesk, with the addition of retry logic. Up to 3 retries are performed for each collection.
+     * Once 3 attempts have been made, and email is sent to the site admin.
+     *
+     * @param integer $collectionId  ID of the information collection.
+     */
+    static function sendCollectedInfoToZDWithRetry($collectionId) {
+        $collection = eZInformationCollection::fetch($collectionId);
+        $collectedInfo = self::buildCollectedInfoArray($collection);
+
+        $retryTrackingRow = ptZendesk::fetch($collection->ID);
+        if (!$retryTrackingRow) {
+            $retryTrackingRow = new ptZendesk(array(
+                'informationcollection_id' => $collectionId,
+                'retry_count' => 0,
+                'status' => ptZendesk::ZENDESK_RETRY_STATUS_PENDING
+            ));
+        }
+
+        $retryCount = $retryTrackingRow->attribute('retry_count');
+        $status = $retryTrackingRow->attribute('status');
+        $error = null;
+
+        $retryCount ++;
+
+        try {
+            self::sendCollectedInfoToZD($collection, $collectedInfo);
+
+            // successful send.
+            $status = ptZendesk::ZENDESK_RETRY_STATUS_SUCCESS;
+
+        } catch (Exception $e) {
+
+            // failure to send.
+            $msg = $e->getMessage();
+            $error = $msg;
+
+            if ($retryCount >= self::MAX_ZENDESK_RETRIES) {
+                $status = ptZendesk::ZENDESK_RETRY_STATUS_FAIL;
+
+                self::sendZendeskFailureEmail($collection, $collectedInfo, $error);
+
+            } else {
+                $status = ptZendesk::ZENDESK_RETRY_STATUS_RETRY;
+            }
+
+        } finally {
+            // update the tracking row.
+
+            $retryTrackingRow->setAttribute('retry_count', $retryCount);
+            $retryTrackingRow->setAttribute('status', $status);
+            $retryTrackingRow->setAttribute('error', substr($error, 0, 1000));
+
+            $retryTrackingRow->store();
+        }
+
+    }
+
+    /**
+     * Sends a failure email to the site administrator, triggered when 3 retries have been made.
+     *
+     * @param $collection eZInformationCollection collection to send
+     * @param $collectedInfo array array version of collection->dataMap()
+     * @param $error string Error message to quote in the email
+     * @throws Exception if email send fails
+     */
     private static function sendZendeskFailureEmail($collection, $collectedInfo, $error)
     {
 
