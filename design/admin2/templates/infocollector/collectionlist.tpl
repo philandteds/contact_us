@@ -79,7 +79,7 @@
 
     {if $zendesk_status|not}
         <td><span class="zendesk-na">-</span></td>
-        <td></td>
+        <td><a href={concat('/contact_us/resend_zendesk/', $Collections.item.id, '/(offset)/', first_set($view_parameters.offset, 0))|ezurl}>Resend to Zendesk</a></td>
     {else}
         <td><span class="zendesk-{$zendesk_status.status|downcase|wash(xhtml)}">{$zendesk_status.status|wash(xhtml)}</span></td>
         <td>{if $zendesk_status.status|ne('SUCCESS')}<a href={concat('/contact_us/resend_zendesk/', $Collections.item.id, '/(offset)/', first_set($view_parameters.offset, 0))|ezurl}>Resend to Zendesk</a>{/if}</td>

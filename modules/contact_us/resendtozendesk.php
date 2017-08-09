@@ -9,7 +9,7 @@ try {
     $collection = eZInformationCollection::fetch($informationCollectionId);
 
     $trackingRecord = ptZendesk::fetch($informationCollectionId);
-    if ($trackingRecord->attribute('status') == ptZendesk::ZENDESK_RETRY_STATUS_SUCCESS) {
+    if ($trackingRecord && $trackingRecord->attribute('status') == ptZendesk::ZENDESK_RETRY_STATUS_SUCCESS) {
         throw new Exception('Zendesk ticket has already been successfully raised. No need to do it again.');
     }
 
