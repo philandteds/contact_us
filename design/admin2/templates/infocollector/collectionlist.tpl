@@ -1,3 +1,5 @@
+{set-block scope=global variable=cache_ttl}0{/set-block}
+
 {def $zendesk_status=false()}
 
 {literal}

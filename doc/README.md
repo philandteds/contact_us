@@ -33,8 +33,8 @@ appropriate user roles.
 
 ### Notes
 
-* The cronjob must be executed from mb_global or pt_global. If it is executed from mb_admin or pt_admin, 
-blank emails may arrive. The cronjob is set up to run under the "frequent" group.
+* The cronjob must be executed from mb_admin or pt_admin. If it is executed from a siteaccess that does not include the 
+admin2 design, blank emails will arrive.
 
 * Emails are currently sent **to** the email address listed in site.ini, under 
 
