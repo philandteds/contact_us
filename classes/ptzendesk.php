@@ -59,6 +59,14 @@ class ptZendesk extends eZPersistentObject
             $asObject );
     }
 
+    static function fetchInPendingOrRetry( ) {
+        return eZPersistentObject::fetchObjectList( ptZendesk::definition(),
+            null,
+            array( 'status' => array( array( self::ZENDESK_RETRY_STATUS_RETRY, self::ZENDESK_RETRY_STATUS_PENDING) )),
+            true );
+    }
+
+
     static function fetchInRetry( )
     {
         return eZPersistentObject::fetchObjectList( ptZendesk::definition(),

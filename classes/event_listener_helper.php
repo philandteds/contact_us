@@ -363,7 +363,7 @@ class EventListenerHelper {
         $mailResult = eZMailTransport::send($mail);
 
         if ($mailResult === false) {
-            throw new Exception('Mail with collected info has not been sent');
+            //throw new Exception('Mail with collected info has not been sent');
         }
 
     }
