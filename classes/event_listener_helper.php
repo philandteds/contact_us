@@ -259,7 +259,10 @@ class EventListenerHelper {
             } else {
                 $ticketIDAttribute->setAttribute('data_text', $ticket->id);
                 $ticketIDAttribute->store();
+
+                eZContentCacheManager::clearContentCache(array($collection->object()->ID));
             }
+
         }
     }
 
