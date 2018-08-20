@@ -97,9 +97,9 @@ class='message-warning' validation=$validation collection_attributes=$collection
 </div>
 
 <script>
-    { literal }
+    {literal}
     head(function () {
         $.validate();
     });
-    { /literal}
+    {/literal}
 </script> {undef $query_types $countries $button_url $button_text $attribute $selected_value}
