@@ -39,12 +39,14 @@
             }
             // scroll to the info box where ever it may be
             var offset = $('.fancybox-inner').offset();
-            offset.left -= 20;
-            offset.top -= 20;
-            $('html, body').animate({
-                scrollTop: offset.top,
-                scrollLeft: offset.left
-            });
+            if (offset) {
+                offset.left -= 20;
+                offset.top -= 20;
+                $('html, body').animate({
+                    scrollTop: offset.top,
+                    scrollLeft: offset.left
+                });
+            }
         },
 
         handleChangeCountry = function() {
